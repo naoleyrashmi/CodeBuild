@@ -1,0 +1,29 @@
+{
+    "Parameters": [
+      {
+         "ParameterKey": "S3BucketName",
+         "ParameterValue": "rashmi-ohio-sam-demo"
+      },
+      {
+         "ParameterKey": "S3KeyName",
+         "ParameterValue": "MeghFlow-DBConnMgmt-Lambda-DBConnMgmtFunction.zip"
+      },
+      {
+          "ParameterKey": "HandlerName",
+          "ParameterValue": "com.xoriant.meghflow.dbconnmgmt.lambda.DBConnMgmtLambda::handleRequest"
+      },
+      {
+        "ParameterKey": "apiGatewayStageName",
+        "ParameterValue": "dev"
+    },
+    {
+        "ParameterKey": "AccountName",
+        "ParameterValue": "citi1238784"
+    },
+    {
+        "ParameterKey": "Region",
+        "ParameterValue": "us-east-2"
+    }
+   ]
+  }
+  
