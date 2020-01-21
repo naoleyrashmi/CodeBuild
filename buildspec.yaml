@@ -1,0 +1,54 @@
+version: 0.2
+
+phases:
+  install:
+    commands:
+    # - |
+    #     pip install -U pip
+    #     pip install -U awscli
+    # - pip3 install aws-sam-cli
+    # - pip install 
+    - wget -O jq https://github.com/stedolan/jq/releases/download/jq-1.6/jq-linux64
+    - chmod +x ./jq
+    - cp jq /usr/bin
+    - sudo cp jq /usr/bin
+
+  pre_build:
+    commands:
+      - echo "[Pre-Build phase]
+         
+  build:
+    commands:
+      - echo "Starting SAM packaging `date` in `pwd`"
+      - aws cloudformation package --template-file template.yaml --s3-bucket rashmi-ohio-sam-demo --output-template-file packaged.yaml
+      - aws s3 cp ./packaged.yaml s3://rashmi-ohio-sam-demo/packaged.yaml
+      - aws s3 cp s3://rashmi-ohio-sam-demo/packaged.yaml C:\codebuild\tmp\output
+      - echo %CODEBUILD_SRC_DIR%
+    #  finally:
+    #   - echo THE PATH WORK IS !!!
+    #   - echo CODE BUILD SRC DIRECTORY
+    #   - echo %CODEBUILD_SRC_DIR%
+      # - copy packaged.yaml C:\codebuild\tmp\output
+      # - aws s3 cp ./packaged.yaml C:\codebuild\tmp\output\
+      # - aws s3 cp s3://rashmi-ohio-sam-demo/packaged.yaml C:\codebuild\tmp\output
+      # - aws s3 cp s3://rashmi-ohio-sam-demo/packaged.yaml C:\codebuild\tmp\output\
+      # - aws s3 cp ./packaged.yaml .
+      # - sam deploy --stack-name codebuildtesting --change-set-type=CREATE
+
+  post_build:
+    commands:
+    - STACK_NAME="mystack"
+    - TEMPLATE="mytemplate.yaml"
+    - PARAMETERS_FILE="parameters.json"
+    - PARAMS=($(jq -r '.Parameters[] | [.ParameterKey, .ParameterValue] | "\(.[0])=\(.[1])"' ${PARAMETERS_FILE}))
+    - aws cloudformation deploy \
+      --template-file "${TEMPLATE}" \
+      --region us-east-2 \
+      --capabilities CAPABILITY_IAM \
+      --stack-name "${STACK_NAME}" \
+      --parameter-overrides ${PARAMS[@]}
+
+artifacts:
+  type: zip
+  files:
+    - packaged.yaml
