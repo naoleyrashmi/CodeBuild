@@ -49,11 +49,11 @@ phases:
     # - echo $PARAMS
     # - aws cloudformation deploy --template-file  C:\codebuild\tmp\output\packaged.yaml --region us-east-2 --capabilities CAPABILITY_IAM --stack-name test1234 --parameter-overrides ${PARAMS[@]}
     - ls 
-    - aws cloudformation deploy --template-file /codebuild/output/packaged.yaml --region us-east-2 --stack-name InitialSetup --capabilities CAPABILITY_IAM  --parameter-overrides ${PARAMS[@]}
+    # - aws cloudformation deploy --template-file /codebuild/output/packaged.yaml --region us-east-2 --stack-name InitialSetup --capabilities CAPABILITY_IAM  --parameter-overrides ${PARAMS[@]}
 
     # - chmod 777 test.sh
     # - ./test.sh
-    # - aws cloudformation deploy --template-file /codebuild/output/packaged.yaml --region us-east-2 --stack-name InitialSetup --capabilities CAPABILITY_IAM  --parameter-overrides S3BucketName=rashmi-ohio-sam-demo S3KeyName=MeghFlow-DBConnMgmt-Lambda-DBConnMgmtFunction.zip HandlerName=com.xoriant.meghflow.dbconnmgmt.lambda.DBConnMgmtLambda::handleRequest apiGatewayStageName=dev AccountName=cititrtfg Region=us-east-2 
+    - aws cloudformation deploy --template-file /codebuild/output/packaged.yaml --region us-east-2 --stack-name InitialSetup --capabilities CAPABILITY_IAM  --parameter-overrides S3BucketName=rashmi-ohio-sam-demo S3KeyName=MeghFlow-DBConnMgmt-Lambda-DBConnMgmtFunction.zip HandlerName=com.xoriant.meghflow.dbconnmgmt.lambda.DBConnMgmtLambda::handleRequest apiGatewayStageName=dev AccountName=cititrtfg Region=us-east-2 
 
 artifacts:
   type: zip
