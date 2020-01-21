@@ -41,15 +41,13 @@ phases:
   post_build:
     commands:
     - STACK_NAME="mystack"
+    - echo %STACK_NAME%
     - TEMPLATE="mytemplate.yaml"
+    - echo %TEMPLATE%
     - PARAMETERS_FILE="parameters.json"
+    - echo %PARAMETERS_FILE%
     - PARAMS=($(jq -r '.Parameters[] | [.ParameterKey, .ParameterValue] | "\(.[0])=\(.[1])"' ${PARAMETERS_FILE}))
-    - aws cloudformation deploy \
-      --template-file "${TEMPLATE}" \
-      --region us-east-2 \
-      --capabilities CAPABILITY_IAM \
-      --stack-name "${STACK_NAME}" \
-      --parameter-overrides ${PARAMS[@]}
+    - aws cloudformation deploy --template-file "${TEMPLATE}" --region us-east-2 --capabilities CAPABILITY_IAM --stack-name "${STACK_NAME}" --parameter-overrides ${PARAMS[@]}
 
 artifacts:
   type: zip
