@@ -37,10 +37,10 @@ phases:
     # - TEMPLATE="mytemplate.yaml"
     # - echo %TEMPLATE%
     # - PARAMETERS_FILE="parameters.json" &&  PARAMS=($(jq -r '.Parameters[] | [.ParameterKey, .ParameterValue] | "\(.[0])=\(.[1])"' ${PARAMETERS_FILE}))
-     - ls 
+      - ls 
     # - aws cloudformation deploy --template-file /codebuild/output/packaged.yaml --region us-east-2 --stack-name InitialSetup --capabilities CAPABILITY_IAM  --parameter-overrides ${PARAMS[@]}
-    - chmod 777 test.sh
-    - ./test.sh
+      - chmod 777 test.sh
+      - ./test.sh
     # - aws cloudformation deploy --template-file /codebuild/output/packaged.yaml --region us-east-2 --stack-name InitialSetup --capabilities CAPABILITY_IAM  --parameter-overrides S3BucketName=rashmi-ohio-sam-demo S3KeyName=MeghFlow-DBConnMappingInfoMg-DBConnMappingFunction.zip HandlerName=com.xoriant.meghflow.dbconnmappingmgmt.lambda.DBConnMappingMgmtLambda::handleRequest apiGatewayStageName=dev AccountName=cititrtfg Region=us-east-2 
     # - aws cloudformation deploy --template-file /codebuild/output/packaged.yaml --region us-east-2 --stack-name InitialSetup --capabilities CAPABILITY_IAM  --parameter-overrides $(jq -r '.[] | [.ParameterKey, .ParameterValue] | join("=")' parameters.json)
 artifacts:
