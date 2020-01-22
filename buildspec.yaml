@@ -10,9 +10,6 @@ phases:
     - cp jq /usr/bin
     - jq --version 
   
-  # pre_build:
-  #   commands:
-  #     # - echo "[Pre-Build phase]
          
   build:
     commands:

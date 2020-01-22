@@ -6,11 +6,11 @@
       },
       {
          "ParameterKey": "S3KeyName",
-         "ParameterValue": "MeghFlow-DBConnMgmt-Lambda-DBConnMgmtFunction.zip"
+         "ParameterValue": "MeghFlow-DBConnMappingInfoMg-DBConnMappingFunction.zip"
       },
       {
           "ParameterKey": "HandlerName",
-          "ParameterValue": "com.xoriant.meghflow.dbconnmgmt.lambda.DBConnMgmtLambda::handleRequest"
+          "ParameterValue": "com.xoriant.meghflow.dbconnmappingmgmt.lambda.DBConnMappingMgmtLambda::handleRequest"
       },
       {
         "ParameterKey": "apiGatewayStageName",
@@ -18,7 +18,7 @@
     },
     {
         "ParameterKey": "AccountName",
-        "ParameterValue": "citi1238784"
+        "ParameterValue": "citi"
     },
     {
         "ParameterKey": "Region",

@@ -173,3 +173,9 @@ Outputs:
 
   lambdaname:
     Value: !Ref 'MeghFlowLambda'
+
+  S3BUcketName:
+    Value: !Ref 'ArtifactBucket'
+
+  DynamoDBName:
+    Value: !Ref 'MeghFlowDynamoDBTable'
