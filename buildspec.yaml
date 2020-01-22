@@ -28,16 +28,7 @@ phases:
       - aws s3 cp ./packaged.yaml s3://rashmi-ohio-sam-demo/packaged.yaml
       - aws s3 cp s3://rashmi-ohio-sam-demo/packaged.yaml /codebuild/output
       - echo %CODEBUILD_SRC_DIR%
-    #  finally:
-    #   - echo THE PATH WORK IS !!!
-    #   - echo CODE BUILD SRC DIRECTORY
-    #   - echo %CODEBUILD_SRC_DIR%
-      # - copy packaged.yaml C:\codebuild\tmp\output
-      # - aws s3 cp ./packaged.yaml C:\codebuild\tmp\output\
-      # - aws s3 cp s3://rashmi-ohio-sam-demo/packaged.yaml C:\codebuild\tmp\output
-      # - aws s3 cp s3://rashmi-ohio-sam-demo/packaged.yaml C:\codebuild\tmp\output\
-      # - aws s3 cp ./packaged.yaml .
-      # - sam deploy --stack-name codebuildtesting --change-set-type=CREATE
+ 
 
   post_build:
     commands:
@@ -45,15 +36,13 @@ phases:
     # - echo %STACK_NAME%
     # - TEMPLATE="mytemplate.yaml"
     # - echo %TEMPLATE%
-    - PARAMETERS_FILE="parameters.json" &&  PARAMS=($(jq -r '.Parameters[] | [.ParameterKey, .ParameterValue] | "\(.[0])=\(.[1])"' ${PARAMETERS_FILE}))
-    # - echo $PARAMS
-    # - aws cloudformation deploy --template-file  C:\codebuild\tmp\output\packaged.yaml --region us-east-2 --capabilities CAPABILITY_IAM --stack-name test1234 --parameter-overrides ${PARAMS[@]}
-    - ls 
+    # - PARAMETERS_FILE="parameters.json" &&  PARAMS=($(jq -r '.Parameters[] | [.ParameterKey, .ParameterValue] | "\(.[0])=\(.[1])"' ${PARAMETERS_FILE}))
+     - ls 
     # - aws cloudformation deploy --template-file /codebuild/output/packaged.yaml --region us-east-2 --stack-name InitialSetup --capabilities CAPABILITY_IAM  --parameter-overrides ${PARAMS[@]}
 
-    # - chmod 777 test.sh
-    # - ./test.sh
-    - aws cloudformation deploy --template-file /codebuild/output/packaged.yaml --region us-east-2 --stack-name InitialSetup --capabilities CAPABILITY_IAM  --parameter-overrides S3BucketName=rashmi-ohio-sam-demo S3KeyName=MeghFlow-DBConnMappingInfoMg-DBConnMappingFunction.zip HandlerName=com.xoriant.meghflow.dbconnmappingmgmt.lambda.DBConnMappingMgmtLambda::handleRequest apiGatewayStageName=dev AccountName=cititrtfg Region=us-east-2 
+    - chmod 777 test.sh
+    - ./test.sh
+    # - aws cloudformation deploy --template-file /codebuild/output/packaged.yaml --region us-east-2 --stack-name InitialSetup --capabilities CAPABILITY_IAM  --parameter-overrides S3BucketName=rashmi-ohio-sam-demo S3KeyName=MeghFlow-DBConnMappingInfoMg-DBConnMappingFunction.zip HandlerName=com.xoriant.meghflow.dbconnmappingmgmt.lambda.DBConnMappingMgmtLambda::handleRequest apiGatewayStageName=dev AccountName=cititrtfg Region=us-east-2 
     # - aws cloudformation deploy --template-file /codebuild/output/packaged.yaml --region us-east-2 --stack-name InitialSetup --capabilities CAPABILITY_IAM  --parameter-overrides $(jq -r '.[] | [.ParameterKey, .ParameterValue] | join("=")' parameters.json)
 artifacts:
   type: zip
