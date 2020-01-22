@@ -30,13 +30,13 @@ Parameters:
     Type: String
     Default: us-east-2
 
-  # PrimePartitionKey:
-  #   Description: HashType PrimaryKey Name
-  #   Type: String
-  #   AllowedPattern: '[a-zA-Z0-9]*'
-  #   MinLength: '1'
-  #   MaxLength: '2048'
-  #   ConstraintDescription: must contain only alphanumberic characters
+  PrimePartitionKey:
+    Description: HashType PrimaryKey Name
+    Type: String
+    AllowedPattern: '[a-zA-Z0-9]*'
+    MinLength: '1'
+    MaxLength: '2048'
+    ConstraintDescription: must contain only alphanumberic characters
 
   # PrimePartitionKeyType:
   #   Description: HashType PrimaryKey Type
@@ -47,21 +47,21 @@ Parameters:
   #   MaxLength: '1'
   #   ConstraintDescription: must be either S or N
 
-  # ReadCapacityUnits:
-  #   Description: Provisioned read throughput
-  #   Type: Number
-  #   Default: '5'
-  #   MinValue: '5'
-  #   MaxValue: '10000'
-  #   ConstraintDescription: must be between 5 and 10000
+  ReadCapacityUnits:
+    Description: Provisioned read throughput
+    Type: Number
+    Default: '5'
+    MinValue: '5'
+    MaxValue: '10000'
+    ConstraintDescription: must be between 5 and 10000
 
-  # WriteCapacityUnits:
-  #   Description: Provisioned write throughput
-  #   Type: Number
-  #   Default: '5'
-  #   MinValue: '5'
-  #   MaxValue: '10000'
-  #   ConstraintDescription: must be between 5 and 10000
+  WriteCapacityUnits:
+    Description: Provisioned write throughput
+    Type: Number
+    Default: '5'
+    MinValue: '5'
+    MaxValue: '10000'
+    ConstraintDescription: must be between 5 and 10000
 
 Resources:
   ArtifactBucket:
@@ -73,18 +73,18 @@ Resources:
       VersioningConfiguration:
         Status: Suspended
   
-  # MeghFlowDynamoDBTable:
-  #   Type: AWS::DynamoDB::Table
-  #   Properties:
-  #     AttributeDefinitions:
-  #     - AttributeName: !Ref 'PrimePartitionKey'
-  #       AttributeType: !Ref 'PrimePartitionKeyType'
-  #     KeySchema:
-  #     - AttributeName: !Ref 'PrimePartitionKey'
-  #       KeyType: HASH
-  #     ProvisionedThroughput:
-  #       ReadCapacityUnits: !Ref 'ReadCapacityUnits'
-  #       WriteCapacityUnits: !Ref 'WriteCapacityUnits'
+  MeghFlowDynamoDBTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      AttributeDefinitions:
+      - AttributeName: !Ref 'PrimePartitionKey'
+        AttributeType: S
+      KeySchema:
+      - AttributeName: !Ref 'PrimePartitionKey'
+        KeyType: HASH
+      ProvisionedThroughput:
+        ReadCapacityUnits: !Ref 'ReadCapacityUnits'
+        WriteCapacityUnits: !Ref 'WriteCapacityUnits'
 
   apiGateway:
     Type: "AWS::ApiGateway::RestApi"
@@ -124,8 +124,6 @@ Resources:
           - StatusCode: 200
             ResponseParameters:
               method.response.header.Content-Type: "'application/json'"
-        # ResponseTemplates:
-        #   text/html: "$input.path('$')"
       ResourceId: !Ref "dbconn" 
       RestApiId: !Ref "apiGateway"
       MethodResponses:

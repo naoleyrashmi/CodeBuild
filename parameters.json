@@ -23,6 +23,10 @@
     {
         "ParameterKey": "Region",
         "ParameterValue": "us-east-2"
+    },
+    {
+        "ParameterKey": "PrimePartitionKey",
+        "ParameterValue": "ConnectionId"
     }
    ]
   }
