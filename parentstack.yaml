@@ -147,3 +147,8 @@ Resources:
       TemplateURL:
         Fn::Sub: "https://rashmi-ohio-sam-demo.s3.us-east-2.amazonaws.com/CFTemplates/lambda3.yaml"
       
+  RedshiftStack:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL:
+        Fn::Sub: "https://rashmi-ohio-sam-demo.s3.us-east-2.amazonaws.com/CFTemplates/redshift.yaml"
