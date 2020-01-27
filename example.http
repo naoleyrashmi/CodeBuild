@@ -1,0 +1,28 @@
+POST https://suul12wj1h.execute-api.us-east-2.amazonaws.com/dev/dbConnMgmt
+
+
+
+{
+    "operation" : "CREATE",
+            "dbConnections" : [{
+                                      "DatabaseType" : "Oracle",
+                                      "ConnectionName" : "srcConnection",
+                                      "DBHostIPAddress" : "Localhost",
+                                      "DBSchemaName" : "myDevSchema",
+                                      "DBPort" : 5555,
+                                      "UserName" : "admin",
+                                      "Password" : "Password",
+                                      "TestSQLForDBConnection" : "Select 1 from Dual",
+                                      "IsSourceDB" : "Y"
+    },{
+                                      "DatabaseType" : "Redshift",
+                                      "ConnectionName" : "destConnection",
+                                      "DBHostIPAddress" : "RedshiftAtCloud",
+                                      "DBSchemaName" : "myDevDestSchema",
+                                      "DBPort" : 9999,
+                                      "UserName" : "admin",
+                                      "Password" : "Password",
+                                      "TestSQLForDBConnection" : "Select 1 from redshift",
+                                      "IsSourceDB" : "N"
+    }]
+}
