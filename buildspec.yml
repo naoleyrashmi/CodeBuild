@@ -2,11 +2,11 @@ version: 0.2
 environment_variables:
   plaintext:
     CHILD_TEMPLATES: |
-      s3child.yml
-      dyanamodb.yml
-      dyanamodb1.yml
-      dyanamodb2.yml
-      dyanamodb3.yml
+      s3child.yaml
+      dyanamodb.yaml
+      dyanamodb1.yaml
+      dyanamodb2.yaml
+      dyanamodb3.yaml
       lambda.yaml
       lambda1.yaml
       lambda2.yaml
@@ -14,11 +14,11 @@ environment_variables:
       redshift.yaml
     TEMPLATE_FILES: |
       parentstack.yaml
-      s3child.yml
-      dyanamodb.yml
-      dyanamodb1.yml
-      dyanamodb2.yml
-      dyanamodb3.yml
+      s3child.yaml
+      dyanamodb.yaml
+      dyanamodb1.yaml
+      dyanamodb2.yaml
+      dyanamodb3.yaml
       lambda.yaml
       lambda1.yaml
       lambda2.yaml
