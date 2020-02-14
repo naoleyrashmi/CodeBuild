@@ -1,0 +1,63 @@
+version: 0.2
+environment_variables:
+  plaintext:
+    CHILD_TEMPLATES: |
+      s3child.yml
+      dyanamodb.yml
+      dyanamodb1.yml
+      dyanamodb2.yml
+      dyanamodb3.yml
+      lambda.yaml
+      lambda1.yaml
+      lambda2.yaml
+      lambda3.yaml
+      redshift.yaml
+    TEMPLATE_FILES: |
+      parentstack.yaml
+      s3child.yml
+      dyanamodb.yml
+      dyanamodb1.yml
+      dyanamodb2.yml
+      dyanamodb3.yml
+      lambda.yaml
+      lambda1.yaml
+      lambda2.yaml
+      lambda3.yaml
+      redshift.yaml
+
+phases:
+  install:
+    runtime-versions:
+      java: corretto8
+    commands: 
+    - wget -O jq https://github.com/stedolan/jq/releases/download/jq-1.6/jq-linux64
+    - chmod +x ./jq
+    - cp jq /usr/bin
+    - jq --version 
+  
+  pre_build:
+    commands:
+      - echo "Validating CFN templates"
+      - |
+        for cfn_template in $TEMPLATE_FILES; do
+          echo "Validating CloudFormation template file $cfn_template"
+          aws cloudformation validate-template --template-body file://$cfn_template
+        done
+         
+  build:
+    commands:
+      - aws cloudformation package --template-file parentstack.yaml --s3-bucket rashmi-ohio-sam-demo --output-template-file packaged.yaml
+      - aws s3 cp ./packaged.yaml s3://rashmi-ohio-sam-demo/packaged.yaml
+      - aws s3 cp s3://rashmi-ohio-sam-demo/packaged.yaml /codebuild/output
+      - echo $CODEBUILD_SRC_DIR
+ 
+
+  post_build:
+    commands:
+      - ls 
+      - chmod 777 test.sh
+      - ./test.sh
+artifacts:
+  type: zip
+  files:
+    - packaged.yaml

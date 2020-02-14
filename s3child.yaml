@@ -1,0 +1,21 @@
+Description: "Customer Artifacts bucket"   
+Parameters:
+  AccountName:
+    Description: Please Enter valid Account Name.
+    Type: String
+    Default: citi
+  # Region:
+  #   Description: Enter Region
+  #   Type: String
+  #   Default: us-east-2
+
+Resources:
+  ArtifactBucket:
+    Type: AWS::S3::Bucket
+    DeletionPolicy: Delete
+    Properties:
+      BucketName: !Sub ${AccountName}-artifacts-meghflow
+      # AccessControl: PublicReadWrite
+      # VersioningConfiguration:
+      #   Status: Suspended
+   
