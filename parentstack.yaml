@@ -73,7 +73,7 @@ Resources:
     Type: AWS::CloudFormation::Stack
     Properties:
       TemplateURL:
-        Fn::Sub: "https://rashmi-ohio-sam-demo.s3.us-east-2.amazonaws.com/CFTemplates/s3child.yaml"
+        Fn::Sub: "https://rashmi-ohio-sam-demo.s3.us-east-2.amazonaws.com/CFInitialSetupTemplates/s3child.yaml"
       Parameters:
         AccountName: !Ref AccountName
 
@@ -81,7 +81,7 @@ Resources:
     Type: AWS::CloudFormation::Stack
     Properties:
       TemplateURL:
-        Fn::Sub: "https://rashmi-ohio-sam-demo.s3.us-east-2.amazonaws.com/CFTemplates/dyanamodb.yaml"
+        Fn::Sub: "https://rashmi-ohio-sam-demo.s3.us-east-2.amazonaws.com/CFInitialSetupTemplates/dyanamodb.yaml"
       Parameters:
         PrimePartitionKey: !Ref PrimePartitionKey
 
@@ -89,7 +89,7 @@ Resources:
     Type: AWS::CloudFormation::Stack
     Properties:
       TemplateURL:
-        Fn::Sub: "https://rashmi-ohio-sam-demo.s3.us-east-2.amazonaws.com/CFTemplates/dyanamodb1.yaml"
+        Fn::Sub: "https://rashmi-ohio-sam-demo.s3.us-east-2.amazonaws.com/CFInitialSetupTemplates/dyanamodb1.yaml"
       Parameters:
         PrimePartitionKey1: !Ref PrimePartitionKey1
   
@@ -97,7 +97,7 @@ Resources:
     Type: AWS::CloudFormation::Stack
     Properties:
       TemplateURL:
-        Fn::Sub: "https://rashmi-ohio-sam-demo.s3.us-east-2.amazonaws.com/CFTemplates/dyanamodb2.yaml"
+        Fn::Sub: "https://rashmi-ohio-sam-demo.s3.us-east-2.amazonaws.com/CFInitialSetupTemplates/dyanamodb2.yaml"
       Parameters:
         PrimePartitionKey2: !Ref PrimePartitionKey2
 
@@ -105,7 +105,7 @@ Resources:
     Type: AWS::CloudFormation::Stack
     Properties:
       TemplateURL:
-        Fn::Sub: "https://rashmi-ohio-sam-demo.s3.us-east-2.amazonaws.com/CFTemplates/dyanamodb3.yaml"
+        Fn::Sub: "https://rashmi-ohio-sam-demo.s3.us-east-2.amazonaws.com/CFInitialSetupTemplates/dyanamodb3.yaml"
       Parameters:
         PrimePartitionKey3: !Ref PrimePartitionKey3
 
@@ -113,7 +113,7 @@ Resources:
     Type: AWS::CloudFormation::Stack
     Properties:
       TemplateURL:
-        Fn::Sub: "https://rashmi-ohio-sam-demo.s3.us-east-2.amazonaws.com/CFTemplates/lambda.yaml"
+        Fn::Sub: "https://rashmi-ohio-sam-demo.s3.us-east-2.amazonaws.com/CFInitialSetupTemplates/lambda.yaml"
       Parameters:
         # S3BucketName: !Ref S3BucketName
         S3KeyName: !Ref S3KeyName
@@ -124,7 +124,7 @@ Resources:
     Type: AWS::CloudFormation::Stack
     Properties:
       TemplateURL:
-        Fn::Sub: "https://rashmi-ohio-sam-demo.s3.us-east-2.amazonaws.com/CFTemplates/lambda1.yaml"
+        Fn::Sub: "https://rashmi-ohio-sam-demo.s3.us-east-2.amazonaws.com/CFInitialSetupTemplates/lambda1.yaml"
       # Parameters:
       #   # S3BucketName: !Ref S3BucketName
       #   S3KeyName1: !Ref S3KeyName1
@@ -135,7 +135,7 @@ Resources:
     Type: AWS::CloudFormation::Stack
     Properties:
       TemplateURL:
-        Fn::Sub: "https://rashmi-ohio-sam-demo.s3.us-east-2.amazonaws.com/CFTemplates/lambda2.yaml"
+        Fn::Sub: "https://rashmi-ohio-sam-demo.s3.us-east-2.amazonaws.com/CFInitialSetupTemplates/lambda2.yaml"
       # Parameters:
         # S3KeyName2: !Ref S3KeyName2
         # HandlerName2: !Ref HandlerName2
@@ -145,10 +145,10 @@ Resources:
     Type: AWS::CloudFormation::Stack
     Properties:
       TemplateURL:
-        Fn::Sub: "https://rashmi-ohio-sam-demo.s3.us-east-2.amazonaws.com/CFTemplates/lambda3.yaml"
+        Fn::Sub: "https://rashmi-ohio-sam-demo.s3.us-east-2.amazonaws.com/CFInitialSetupTemplates/lambda3.yaml"
       
   RedshiftStack:
     Type: AWS::CloudFormation::Stack
     Properties:
       TemplateURL:
-        Fn::Sub: "https://rashmi-ohio-sam-demo.s3.us-east-2.amazonaws.com/CFTemplates/redshift.yaml"
+        Fn::Sub: "https://rashmi-ohio-sam-demo.s3.us-east-2.amazonaws.com/CFInitialSetupTemplates/redshift.yaml"
