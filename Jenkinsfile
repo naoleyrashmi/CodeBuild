@@ -1,12 +1,13 @@
 pipeline {
     agent any
     parameters {
-        string(name: 'Greeting', defaultValue: 'Hello', description: 'How should I greet the world?')
+        // string(name: 'Greeting', defaultValue: 'Hello', description: 'How should I greet the world?')
 		string(name: 'Region', defaultValue: 'ua-east-2' ,description: 'Please select the AWS Region')
-        credentials(name: 'CREDENTIALS', description: 'AWS Credentials', credentialType: "Username with password")        string(name: "Prime-Partition-Key", defaultValue: 'DataFlowId', description: "HashType PrimaryKey Name")
-        string(name: "Prime-Partition-Key1", defaultValue: 'DataFlowId', description: "HashType PrimaryKey1 Name")
-        string(name: "Prime-Partition-Key2", defaultValue: 'DataFlowId', description: "HashType PrimaryKey Name")
-        string(name: "Prime-Partition-Key3", defaultValue: 'ConnectionId', description: "HashType PrimaryKey Name")
+        credentials(name: 'CREDENTIALS', description: 'AWS Credentials', credentialType: 'Username with password')       
+        string(name: 'Prime-Partition-Key', defaultValue: 'DataFlowId', description: 'HashType PrimaryKey Name')
+        string(name: 'Prime-Partition-Key1', defaultValue: 'DataFlowId', description: 'HashType PrimaryKey1 Name')
+        string(name: 'Prime-Partition-Key2', defaultValue: 'DataFlowId', description: 'HashType PrimaryKey Name')
+        string(name: 'Prime-Partition-Key3', defaultValue: 'ConnectionId', description: 'HashType PrimaryKey Name')
 
     }
     stages {
