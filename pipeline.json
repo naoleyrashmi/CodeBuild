@@ -1,0 +1,117 @@
+{
+    "pipeline": {
+        "name": "Test-pipeline-Pipeline-DB9ORZU301BB",
+        "roleArn": "arn:aws:iam::400410987437:role/Test-pipeline-PipelineRole-1P4XGZCUCZ7ER",
+        "artifactStore": {
+            "type": "S3",
+            "location": "test-pipeline-artifacts-1bl82z95bubw2",
+            "encryptionKey": {
+                "id": "arn:aws:kms:us-east-2:400410987437:key/62d34904-8918-4f28-b72a-8118ddb5b6da",
+                "type": "KMS"
+            }
+        },
+        "stages": [
+            {
+                "name": "Source",
+                "actions": [
+                    {
+                        "name": "CodeCommitSource",
+                        "actionTypeId": {
+                            "category": "Source",
+                            "owner": "AWS",
+                            "provider": "CodeCommit",
+                            "version": "1"
+                        },
+                        "runOrder": 1,
+                        "configuration": {
+                            "BranchName": "master",
+                            "RepositoryName": "CodeBuild"
+                        },
+                        "outputArtifacts": [
+                            {
+                                "name": "SourceArtifact"
+                            }
+                        ],
+                        "inputArtifacts": []
+                    }
+                ]
+            },
+            {
+                "name": "Build",
+                "actions": [
+                    {
+                        "name": "Build",
+                        "actionTypeId": {
+                            "category": "Build",
+                            "owner": "AWS",
+                            "provider": "CodeBuild",
+                            "version": "1"
+                        },
+                        "runOrder": 1,
+                        "configuration": {
+                            "ProjectName": "BuildProject-x5UEZ8xqIh4l"
+                        },
+                        "outputArtifacts": [
+                            {
+                                "name": "BuildArtifact"
+                            }
+                        ],
+                        "inputArtifacts": [
+                            {
+                                "name": "SourceArtifact"
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "name": "ExternalDeploy",
+                "actions": [
+                    {
+                        "name": "CreateChangeSet",
+                        "actionTypeId": {
+                            "category": "Deploy",
+                            "owner": "AWS",
+                            "provider": "CloudFormation",
+                            "version": "1"
+                        },
+                        "runOrder": 1,
+                        "configuration": {
+                            "ActionMode": "CHANGE_SET_REPLACE",
+                            "Capabilities": "CAPABILITY_IAM,CAPABILITY_AUTO_EXPAND",
+                            "ChangeSetName": "a-TestStack-Deploy",
+                            "ParameterOverrides": "{}",
+                            "RoleArn": "arn:aws:iam::642637661476:role/policy-cross-acc-codedeploy-lambda",
+                            "StackName": "TestStack",
+                            "TemplatePath": "BuildArtifact::packaged.yaml"
+                        },
+                        "outputArtifacts": [],
+                        "inputArtifacts": [
+                            {
+                                "name": "BuildArtifact"
+                            }
+                        ]
+                    },
+                    {
+                        "name": "ExecuteChangeSet",
+                        "actionTypeId": {
+                            "category": "Deploy",
+                            "owner": "AWS",
+                            "provider": "CloudFormation",
+                            "version": "1"
+                        },
+                        "runOrder": 2,
+                        "configuration": {
+                            "ActionMode": "CHANGE_SET_EXECUTE",
+                            "ChangeSetName": "a-TestStack-Deploy",
+                            "StackName": "TestStack"
+                        },
+                        "outputArtifacts": [],
+                        "inputArtifacts": []
+                    }
+                ]
+            }
+        ],
+        "version": 1
+    }
+}
