@@ -1,20 +1,20 @@
 pipeline {
     agent any
     parameters {
-		string(name: 'Region', defaultValue: 'ua-east-2' ,description: 'Please select the AWS Region')
+		string(name: 'Region', defaultValue: 'ua-east-2' , description: 'Please select the AWS Region')
         credentials(name: 'CREDENTIALS', description: 'AWS Credentials', credentialType: 'Username with password')       
-        string(name: 'Prime-Partition-Key', defaultValue: 'DataFlowId', description: 'HashType PrimaryKey Name')
-        string(name: 'Prime-Partition-Key1', defaultValue: 'DataFlowId', description: 'HashType PrimaryKey1 Name')
-        string(name: 'Prime-Partition-Key2', defaultValue: 'DataFlowId', description: 'HashType PrimaryKey Name')
-        string(name: 'Prime-Partition-Key3', defaultValue: 'ConnectionId', description: 'HashType PrimaryKey Name')
+        string(name: 'PrimePartitionKey', defaultValue: 'DataFlowId' , description: 'HashType PrimaryKey Name')
+        string(name: 'PrimePartitionKey1', defaultValue: 'DataFlowId' , description: 'HashType PrimaryKey1 Name')
+        string(name: 'PrimePartitionKey2', defaultValue: 'DataFlowId' , description: 'HashType PrimaryKey Name')
+        string(name: 'PrimePartitionKey3', defaultValue: 'ConnectionId' , description: 'HashType PrimaryKey Name')
     }
     stages {
         stage('Example') {
             steps {
-                echo "${params.Prime-Partition-Key}"
-				echo "${params.Prime-Partition-Key1}"
-				echo "${params.Prime-Partition-Key2}"
-				echo "${params.Prime-Partition-Key3}"
+                echo "${params.PrimePartitionKey}"
+				echo "${params.PrimePartitionKey1}"
+				echo "${params.PrimePartitionKey2}"
+				echo "${params.PrimePartitionKey3}"
             }
         }
         stage('Preparation') {
@@ -24,12 +24,10 @@ pipeline {
         }    
         stage('Deploy App') {
 			environment {
-				dynamodbkey = "${params.Prime-Partition-Key}"
-				dynamodbkey1 = "${params.Prime-Partition-Key1}"
-				dynamodbkey2 = "${params.Prime-Partition-Key2}"
-				dynamodbkey3 = "${params.Prime-Partition-Key3}"
-				
-				
+				dynamodbkey = "${params.PrimePartitionKey}"
+				dynamodbkey1 = "${params.PrimePartitionKey1}"
+				dynamodbkey2 = "${params.PrimePartitionKey2}"
+				dynamodbkey3 = "${params.PrimePartitionKey3}"	
 			}
             steps {
                 sh (script: '''
