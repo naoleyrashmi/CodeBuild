@@ -33,7 +33,7 @@ node {
         }    
         stage("Deploy App") {
                 def outputs = cfnUpdate(
-                    stack: "${Account_Name}-vpc-app", 
+                    stack: "${ACCOUNT_NAME}-vpc-app", 
                     file:'vpc.yaml', 
                     paramsFile: "params-${BUILD_ID}.yaml", 
                     timeoutInMinutes: 60, 
