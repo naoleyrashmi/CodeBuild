@@ -1,5 +1,4 @@
-pipeline {
-    agent any
+node {
     parameters {
          string(name: 'VpcCidr_Param', description: 'Please Enter the vpc cidr', defaultValue: '172.64.248.0/21')
 		// string(name: 'Region', defaultValue: 'us-east-2' , description: 'Please select the AWS Region')
