@@ -6,7 +6,6 @@ pipeline {
         credentials(name: 'CREDENTIALS', description: 'AWS Credentials', credentialType: 'Username with password')       
         string(name: 'ACCOUNT_NAME', description: 'Please Enter the name of the customer to be on boarded. (CustomerName-AssetName)')
         choice(name: 'REGION', description: 'Please select the AWS Region', choices: 'eu-west-1\neu-west-2\neu-west-3\neu-central-1\nus-west-1\nus-west-2\nus-east-2\nus-east-1\nap-northeast-1\nap-northeast-2\nap-northeast-3\nap-south-1\nap-southeast-1\nap-southeast-2\nca-central-1\ncn-north-1\ncn-northwest-1\nsa-east-1')
-        // string(name: 'VpcCidrParam', description: 'Please Enter the vpc cidr', defaultValue: '10.0.0.0/16')
         string(name: 'PrivateAZASubnet_Block', description: 'Please Enter the private subnet cidr for availability zone a', defaultValue: '10.0.1.0/24')
         string(name: 'PrivateAZBSubnet_Block', description: 'Please Enter the private subnet cidr for availability zone b', defaultValue: '10.0.2.0/24')
         string(name: 'PrivateAZCSubnet_Block',  description: 'Please Enter the private subnet cidr for availability zone c',  defaultValue: '10.0.3.0/24')
@@ -21,18 +20,35 @@ pipeline {
             git 'https://github.com/naoleyrashmi/CodeBuild.git'
             }
         }  
-        // stage('Validation') {
-        //     steps {
-        //     aws cloudformation validate-template --template-body file://vpc.yaml
-        //     }
-        // }    
+        stage("collect params") {
+            steps {
+                 sh '''
+                    #!/bin/bash
+                    export AccountName=${ACCOUNT_NAME}
+                    export AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID} 
+                    export AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
+                    export PrivateAZASubnetBlock=${PrivateAZASubnet_Block}
+                    export PrivateAZBSubnetBlock=${PrivateAZBSubnet_Block}
+                    export PrivateAZCSubnetBlock=${PrivateAZCSubnet_Block}
+                    export PublicAZASubnet_Block=${PublicAZASubnet_Block}
+                    export PublicAZBSubnet_Block=${PublicAZBSubnet_Block}
+                    export PublicAZCSubnet_Block=${PublicAZCSubnet_Block}
+                    python generate_CF_params.py "AccountName REGION PrivateAZASubnetBlock PrivateAZBSubnetBlock PrivateAZCSubnetBlock PublicAZASubnet_Block PublicAZBSubnet_Block PublicAZCSubnet_Block" ${BUILD_ID}
+                 '''
+            }
+        }    
         stage('Deploy App') {
             steps {
-                sh (script: '''
-                    #!bin/bash
-                    aws cloudformation create-stack --template-body file://vpc.yaml --region $REGION --capabilities CAPABILITY_IAM CAPABILITY_AUTO_EXPAND --stack-name "VPCSetup-${Account_Name}" --parameter-overrides VpcCidrParam=${VpcCidr_Param}  PrivateAZASubnetBlock=${PrivateAZASubnet_Block} PrivateAZBSubnetBlock=${PrivateAZBSubnet_Block} PrivateAZCSubnetBlock=${PrivateAZCSubnet_Block} PublicAZASubnetBlock=${PublicAZASubnet_Block} PublicAZBSubnetBlock=${PublicAZBSubnet_Block} PublicAZCSubnetBlock=${PublicAZCSubnet_Block}                    ls -lrt
-                ''')
-            }    
+                def outputs = cfnUpdate(
+                    stack: "${Account_Name}-vpc-app", 
+                    file:'templates/app.yaml', 
+                    paramsFile: "params-${BUILD_ID}.yaml", 
+                    timeoutInMinutes: 60, 
+                    pollInterval: 60000,
+                    onFailure: 'ROLLBACK'
+                )
+                echo "${outputs}"    
+            }
         }
     }
 }
