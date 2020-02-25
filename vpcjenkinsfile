@@ -13,7 +13,6 @@ node {
         string(name: 'PublicAZCSubnet_Block',  description: 'Please Enter the public subnet cidr for availability zone c',  defaultValue: '10.0.6.0/24')
         booleanParam(name: 'APPLY_CHANGES', defaultValue: false, description: 'If not opted, it will be dry run')
     }
-     stages {
         stage('Preparation') {
             git 'https://github.com/naoleyrashmi/CodeBuild.git'
         }  
@@ -43,5 +42,4 @@ node {
                 )
                 echo "${outputs}"   
         }
-    }
 }
