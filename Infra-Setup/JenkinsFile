@@ -21,11 +21,11 @@ pipeline {
             git 'https://github.com/naoleyrashmi/CodeBuild.git'
             }
         }  
-        stage('Validation') {
-            steps {
-            aws cloudformation validate-template --template-body file://vpc.yaml
-            }
-        }    
+        // stage('Validation') {
+        //     steps {
+        //     aws cloudformation validate-template --template-body file://vpc.yaml
+        //     }
+        // }    
         st  
         stage('Deploy App') {
             steps {
