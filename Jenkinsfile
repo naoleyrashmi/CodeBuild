@@ -9,32 +9,18 @@ pipeline {
         string(name: 'PrimePartitionKey2', defaultValue: 'DataFlowId' , description: 'HashType PrimaryKey Name')
         string(name: 'PrimePartitionKey3', defaultValue: 'ConnectionId' , description: 'HashType PrimaryKey Name')
     }
-    stages {
-        stage('Example') {
-            steps {
-                echo "${params.PrimePartitionKey}"
-				echo "${params.PrimePartitionKey1}"
-				echo "${params.PrimePartitionKey2}"
-				echo "${params.PrimePartitionKey3}"
-            }
-        }
+     stages {
         stage('Preparation') {
             steps {
             git 'https://github.com/naoleyrashmi/CodeBuild.git'
             }
         }    
         stage('Deploy App') {
-			environment {
-				dynamodbkey = "${params.PrimePartitionKey}"
-				dynamodbkey1 = "${params.PrimePartitionKey1}"
-				dynamodbkey2 = "${params.PrimePartitionKey2}"
-				dynamodbkey3 = "${params.PrimePartitionKey3}"	
-			}
             steps {
                 sh (script: '''
                     #!bin/bash
                     aws cloudformation package --template-file parentstack.yaml --s3-bucket rashmi-ohio-sam-demo --output-template-file packaged.yaml
-                    aws cloudformation deploy --template-file /var/lib/jenkins/workspace/teghds/packaged.yaml --region us-east-2 --capabilities CAPABILITY_IAM CAPABILITY_AUTO_EXPAND --stack-name "InitialSetup-${Account_Name}" --parameter-overrides PrimePartitionKey=${dynamodbkey}  PrimePartitionKey1=${dynamodbkey1} PrimePartitionKey2=${dynamodbkey2} PrimePartitionKey3=${dynamodbkey3}
+                    aws cloudformation deploy --template-file /var/lib/jenkins/workspace/teghds/packaged.yaml --region us-east-2 --capabilities CAPABILITY_IAM CAPABILITY_AUTO_EXPAND --stack-name "InitialSetup-${Account_Name}" --parameter-overrides PrimePartitionKey=${PrimePartitionKey}  PrimePartitionKey1=${PrimePartitionKey1} PrimePartitionKey2=${PrimePartitionKey2} PrimePartitionKey3=${PrimePartitionKey3}
                     ls -lrt
                 ''')
             }    

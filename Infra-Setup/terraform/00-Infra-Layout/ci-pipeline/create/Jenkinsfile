@@ -1,0 +1,211 @@
+def notifyBuild(String buildStatus = 'STARTED') {
+    buildStatus =  buildStatus ?: 'SUCCESSFUL'
+    to_emails = "${env.DEFAULT_RECIPIENT}" == "null" ? '' : "${env.DEFAULT_RECIPIENT}"
+    def subject = "${buildStatus}: Job '${env.JOB_NAME} :${env.BUILD_NUMBER}'"
+    def summary = "${subject} (${env.BUILD_URL})"
+    def details = """
+        <p>${buildStatus}: Job '${env.JOB_NAME} ${env.BUILD_NUMBER}':</p>
+        <p>Check console output at "<a href="${env.BUILD_URL}">${env.JOB_NAME}:${env.BUILD_NUMBER}</a>"</p>
+    """
+
+    emailext (
+        subject: subject,
+        body: details,
+        attachLog: true,
+        to: to_emails,
+        recipientProviders: [
+            [$class: 'RequesterRecipientProvider']
+        ]
+    )
+}
+
+node {
+    def whImage
+    try{
+        stage ("Get Parameters"){
+            checkout scm
+            List props = []
+            List params = [
+                string(name: 'ACCOUNT_NAME', description: 'Please Enter the name of the customer to be on boarded. (CustomerName-AssetName)'),
+                choice(name: 'REGION', description: 'Please select the AWS Region', choices: 'eu-west-1\neu-west-2\neu-west-3\neu-central-1\nus-west-1\nus-west-2\nus-east-2\nus-east-1\nap-northeast-1\nap-northeast-2\nap-northeast-3\nap-south-1\nap-southeast-1\nap-southeast-2\nca-central-1\ncn-north-1\ncn-northwest-1\nsa-east-1'),
+                credentials(name: 'CREDENTIALS', description: 'AWS Credentials', credentialType: "Username with password"),
+                //password(name: 'ACCESS_KEY', description: 'Please enter the AWS Access key'),
+                //password(name: 'SECRET_KEY', description: 'Please enter the AWS Secret key'),
+                string(name: 'VPC_CIDR', description: 'Please Enter the vpc cidr', defaultValue: '172.64.248.0/21'),
+                string(name: 'PRIVATE_SUBNET_CIDR_AZ_A', description: 'Please Enter the private subnet cidr for availability zone a', defaultValue: '172.64.250.0/23'),
+                string(name: 'PRIVATE_SUBNET_CIDR_AZ_B', description: 'Please Enter the private subnet cidr for availability zone b', defaultValue: '172.64.252.0/23'),
+                string(name: 'PUBLIC_SUBNET_CIDR_AZ_A',  description: 'Please Enter the public subnet cidr for availability zone a',  defaultValue: '172.64.248.0/24'),
+                string(name: 'PUBLIC_SUBNET_CIDR_AZ_B',  description: 'Please Enter the public subnet cidr for availability zone b',  defaultValue: '172.64.249.0/24'),
+                string(name: 'HOSTED_ZONE', description: 'Please enter the hosted zone for the customer', defaultValue: 'tieto-wh.com.'),
+                string(name: 'SNS_INFRASTRUCTURE_ADMIN_ENDPOINT', description: 'Email/Mailbox for Infrastructure Admin Alerts', defaultValue: 'og-aws-monitoring@tieto.com'),
+                string(name: 'SNS_INFRASTRUCTURE_OPS_ENDPOINT', description: 'Email/Mailbox for Infrastructure Operations Alerts', defaultValue: 'og-aws-monitoring@tieto.com'),
+                string(name: 'SNS_DBA_ENDPOINT', description: 'Email/Mailbox for Database (RDS) Alerts', defaultValue: 'og-aws-monitoring@tieto.com'),
+                string(name: 'PROJECT_ID', description: 'Please enter the Project ID'),
+                string(name: 'ASSETS_EXPIRY_DATE', description: 'Date format is DD-MM-YYYY. Please note assets will not removed automatically on this date. It just adds a tag to resources'),
+                booleanParam(name: 'APPLY_CHANGES', defaultValue: false, description: 'If not opted, it will be dry run')
+            ]
+            props << parameters(params)
+            properties(props)
+            whImage = docker.build("whcontainer:latest")
+        }
+
+        /* options ([
+            buildDiscarder( logRotator(numToKeepStr: '30'))
+            //timeout( time: 1, unit: 'HOURS'),
+            //disableConcurrentBuilds()
+        ]) */
+
+        wrap([$class: 'BuildUser']) {
+            withCredentials([
+                [$class: 'AmazonWebServicesCredentialsBinding',
+                credentialsId: CREDENTIALS,
+                roleSessionName: BUILD_USER_EMAIL]]){
+
+                whImage.inside('-u 0:0') {
+                    stage ('Setup Env') {
+                        script {
+                            currentBuild.displayName = "#${env.BUILD_NUMBER}-${params.ACCOUNT_NAME}-${params.APPLY_CHANGES ? 'Apply (Create Resources)' : 'Plan (Dry Run)' }"
+                            currentBuild.description = "${env.BUILD_NUMBER}-${params.ACCOUNT_NAME}-${params.APPLY_CHANGES ? 'Apply (Create Resources)' : 'Plan (Dry run)' }"
+                        }
+                        sh (script: '''
+                            #!/bin/bash
+                            chmod 755 -R terraform
+                            env
+                        ''')
+                    }
+
+                    stage ('Validate Params') {
+                        sh (script: '''
+                            #!/bin/bash
+                            env
+                            JENKINS_WS=`pwd`
+                            cd ./terraform/utility
+                            chmod 755 paramsValidator.sh
+                            # Commented below line as we don't want to create IAM in this pipeline
+                            #./paramsValidator.sh "ACCOUNT_NAME, REGION, AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, AWS_SESSION_TOKEN, VPC_CIDR, PRIVATE_SUBNET_CIDR_AZ_A, PRIVATE_SUBNET_CIDR_AZ_B, PUBLIC_SUBNET_CIDR_AZ_A, PUBLIC_SUBNET_CIDR_AZ_B, HOSTED_ZONE, SNS_INFRASTRUCTURE_ADMIN_ENDPOINT, SNS_INFRASTRUCTURE_OPS_ENDPOINT, SNS_DBA_ENDPOINT, PROJECT_ID, ASSETS_EXPIRY_DATE, APPLY_CHANGES"
+                            ./paramsValidator.sh "ACCOUNT_NAME, REGION, AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, AWS_SESSION_TOKEN, VPC_CIDR, PRIVATE_SUBNET_CIDR_AZ_A, PRIVATE_SUBNET_CIDR_AZ_B, PUBLIC_SUBNET_CIDR_AZ_A, PUBLIC_SUBNET_CIDR_AZ_B, HOSTED_ZONE, SNS_INFRASTRUCTURE_ADMIN_ENDPOINT, SNS_INFRASTRUCTURE_OPS_ENDPOINT, SNS_DBA_ENDPOINT, PROJECT_ID, ASSETS_EXPIRY_DATE, APPLY_CHANGES"
+                            ADDITIONAL_CONFIG_BUCKET_NAME="tieto-${ACCOUNT_NAME}-tfstate"
+                            ADDITIONAL_CONFIG_BUCKET_FOLDER="data/"
+                            SECURITY_GROUP_DATA_FILE_NAME="sg_s3_reference.yml"
+                            IAM_DATA_FILE_NAME="iam-s3-reference.yml"
+                            cd ../00-Infra-Layout/05-security-groups
+                            python ${JENKINS_WS}/terraform/utility/helper.py download_file_from_s3 ${AWS_ACCESS_KEY_ID} ${AWS_SECRET_ACCESS_KEY} ${AWS_SESSION_TOKEN} ${REGION} ${ADDITIONAL_CONFIG_BUCKET_NAME} ${ADDITIONAL_CONFIG_BUCKET_FOLDER} ${SECURITY_GROUP_DATA_FILE_NAME}
+                            python security_groups_builder.py "${SECURITY_GROUP_DATA_FILE_NAME}"
+                            cd ../06-iam
+                            # Commented below lines as we don't want to create IAM in this pipeline
+                            #python ${JENKINS_WS}/terraform/utility/helper.py download_file_from_s3 ${AWS_ACCESS_KEY_ID} ${AWS_SECRET_ACCESS_KEY} ${AWS_SESSION_TOKEN} ${REGION} ${ADDITIONAL_CONFIG_BUCKET_NAME} ${ADDITIONAL_CONFIG_BUCKET_FOLDER} ${IAM_DATA_FILE_NAME}
+                            #python iam_terraform_code_generator.py "${IAM_DATA_FILE_NAME}"
+
+                        ''')
+                    }
+
+                    stage ('01-keygen') {
+                        sh (script: '''
+                            #!/bin/bash
+                            if $APPLY_CHANGES
+                            then
+                                export MODULE=00-Infra-Layout/01-keygen
+                                cd ./terraform/${MODULE}
+                                ./key_create_local.sh
+                            else
+                                echo "This is just dry run key not created"
+                            fi
+                        ''')
+                    }
+
+                    stage ('02-vpc') {
+                        sh (script: '''
+                            #!/bin/bash
+                            export MODULE=00-Infra-Layout/02-vpc
+                            cd ./terraform/${MODULE}/ci
+                            ./run.sh
+                        ''')
+                    }
+
+                    stage ('Create-Resources-In-Parallel') {
+                        parallel '03-s3': {
+                                sh (script: '''
+                                    #!/bin/bash
+                                    # Commented below try catch section as we wont be creating S3 in this pipeline
+
+                                    echo "Keeping it as placeholder. S3 buckets not created in this pipeline"
+                                ''')
+                                /* try{
+                                    sh (script: '''
+                                        #!/bin/bash
+                                        export MODULE=00-Infra-Layout/03-s3
+                                        cd ./terraform/${MODULE}/ci
+                                        ./run.sh
+                                    ''')
+                                }
+                                catch (Exception e){
+                                    currentBuild.result = 'UNSTABLE'
+                                    echo 'Looks like S3 bucket(s) already exists! Skipping this step'
+                                } */
+                            },
+
+                            '04-hosted-zone': {
+                                sh (script: '''
+                                    #!/bin/bash
+                                    
+                                    export MODULE=00-Infra-Layout/04-hosted-zone
+                                    cd ./terraform/${MODULE}/ci
+                                    ./run.sh
+                                ''')
+                            },
+
+                            '05-security-groups': {
+                                sh (script: '''
+                                    #!/bin/bash
+                                    export MODULE=00-Infra-Layout/05-security-groups
+                                    cd ./terraform/${MODULE}/ci
+                                    ./run.sh
+                                ''')
+                            },
+
+                            '06-iam': {
+                                sh (script: '''
+                                    #!/bin/bash
+                                    # Commented below line as we don't want to create IAM in this pipeline
+                                    #export MODULE=00-Infra-Layout/06-iam
+                                    #cd ./terraform/${MODULE}/ci
+                                    #./run.sh
+
+                                    echo "Keeping it as placeholder. IAM roles not created in this pipeline"
+                                ''')
+                            },
+
+                            '07-sns': {
+                                withAWS(region: REGION) {
+                                    if (env.APPLY_CHANGES == "true") {
+                                        echo "Applying CloudFormation Template"
+                                        def outputs = cfnUpdate(stack:"${ACCOUNT_NAME}-sns",
+                                        file:'./terraform/00-Infra-Layout/07-sns/sns.yaml',
+                                        params:[
+                                            "CustomerName=${ACCOUNT_NAME}",
+                                            "InfrastructureAdminEndpoint=${SNS_INFRASTRUCTURE_ADMIN_ENDPOINT}",
+                                            "InfrastructureOpsEndpoint=${SNS_INFRASTRUCTURE_OPS_ENDPOINT}",
+                                            "DbaEndpoint=${SNS_DBA_ENDPOINT}",
+                                        ],
+                                        pollInterval:100000)
+                                    } else {
+                                        echo "Validating the CloudFormation Template"
+                                        def response = cfnValidate(file:'./terraform/00-Infra-Layout/07-sns/sns.yaml')
+                                        echo "template description: ${response.description}"
+                                    }
+                                }
+                            }
+                    }
+                }
+            }
+        }
+    }catch (e) {
+        currentBuild.result = "FAILED"
+        throw e
+    }
+    finally {
+        stage("Send Notifications"){
+            notifyBuild(currentBuild.result)
+        }
+    }
+}
