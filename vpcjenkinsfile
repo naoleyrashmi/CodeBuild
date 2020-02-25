@@ -37,7 +37,7 @@ pipeline {
                  '''
             }
         }    
-        stage('Deploy App') {
+        stage("Deploy App") {
             steps {
                 def outputs = cfnUpdate(
                     stack: "${Account_Name}-vpc-app", 
