@@ -42,7 +42,7 @@ pipeline {
                 script{
                 def outputs = cfnUpdate(
                     stack: "${Account_Name}-vpc-app", 
-                    file:'templates/app.yaml', 
+                    file:'vpc.yaml', 
                     paramsFile: "params-${BUILD_ID}.yaml", 
                     timeoutInMinutes: 60, 
                     pollInterval: 60000,
