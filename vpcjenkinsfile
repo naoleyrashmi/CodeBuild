@@ -38,7 +38,8 @@ pipeline {
                     python generate_CF_params.py "VpcCidrParam REGION AccountName PrivateAZASubnetBlock PrivateAZBSubnetBlock PrivateAZCSubnetBlock PublicAZASubnetBlock PublicAZBSubnetBlock PublicAZCSubnetBlock" ${BUILD_ID}
                  '''
             }
-        }    
+        } 
+    withAWS(region: Region){   
         stage('Deploy App') {
             steps {
                 script{
@@ -54,5 +55,6 @@ pipeline {
             }
         }
     }
+}
 }
 }
