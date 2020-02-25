@@ -26,9 +26,5 @@
     {
       "ParameterKey": "PublicAZCSubnetBlock",
       "ParameterValue": "10.0.160.0/20"
-    },
-    {
-      "ParameterKey": "HighlyAvailableNat",
-      "ParameterValue": "true"
     }
   ]
