@@ -30,7 +30,7 @@ pipeline {
             steps {
                 sh (script: '''
                     #!bin/bash
-                    aws cloudformation create-stack --template-body vpc.yaml --region $REGION --capabilities CAPABILITY_IAM CAPABILITY_AUTO_EXPAND --stack-name "VPCSetup-${Account_Name}" --parameters VpcCidrParam=${VpcCidr_Param}  PrivateAZASubnetBlock=${PrivateAZASubnet_Block} PrivateAZBSubnetBlock=${PrivateAZBSubnet_Block} PrivateAZCSubnetBlock=${PrivateAZCSubnet_Block} PublicAZASubnetBlock=${PublicAZASubnet_Block} PublicAZBSubnetBlock=${PublicAZBSubnet_Block} PublicAZCSubnetBlock=${PublicAZCSubnet_Block}                    ls -lrt
+                    aws cloudformation create-stack --template-body vpc.yaml --region $REGION --capabilities CAPABILITY_IAM CAPABILITY_AUTO_EXPAND --stack-name "VPCSetup-${Account_Name}" --parameters VpcCidrParam=${VpcCidr_Param}  PrivateAZASubnetBlock=${PrivateAZASubnet_Block} PrivateAZBSubnetBlock=${PrivateAZBSubnet_Block} PrivateAZCSubnetBlock=${PrivateAZCSubnet_Block} PublicAZASubnetBlock=${PublicAZASubnet_Block} PublicAZBSubnetBlock=${PublicAZBSubnet_Block} PublicAZCSubnetBlock=${PublicAZCSubnet_Block}
                 ''')
             }    
         }
