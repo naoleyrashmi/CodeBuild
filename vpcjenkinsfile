@@ -1,6 +1,5 @@
 node {
      stage ("Get parameters"){
-    parameters {
          string(name: 'VpcCidr_Param', description: 'Please Enter the vpc cidr', defaultValue: '172.64.248.0/21')
 		// string(name: 'Region', defaultValue: 'us-east-2' , description: 'Please select the AWS Region')
         credentials(name: 'CREDENTIALS', description: 'AWS Credentials', credentialType: 'Username with password')       
