@@ -21,6 +21,9 @@ Parameters:
   AccountName:
     Description: Please Enter the name of the customer. (eg. CustomerName-AssetName)
     Type: String
+  REGION:
+     Type: String
+     Description: Enter the region 
   VpcCidrParam:
     Type: String
     Description: VPC CIDR. For more info, see http://docs.aws.amazon.com/AmazonVPC/latest/UserGuide/VPC_Subnets.html#VPC_Sizing
