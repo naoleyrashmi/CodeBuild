@@ -15,12 +15,9 @@ node {
     }
      stages {
         stage('Preparation') {
-            steps {
             git 'https://github.com/naoleyrashmi/CodeBuild.git'
-            }
         }  
         stage("collect params") {
-            steps {
                  sh '''
                     #!/bin/bash
                     export AccountName=${ACCOUNT_NAME}
@@ -34,10 +31,8 @@ node {
                     export PublicAZCSubnet_Block=${PublicAZCSubnet_Block}
                     python generate_CF_params.py "AccountName REGION PrivateAZASubnetBlock PrivateAZBSubnetBlock PrivateAZCSubnetBlock PublicAZASubnet_Block PublicAZBSubnet_Block PublicAZCSubnet_Block" ${BUILD_ID}
                  '''
-            }
         }    
         stage("Deploy App") {
-            steps {
                 def outputs = cfnUpdate(
                     stack: "${Account_Name}-vpc-app", 
                     file:'vpc.yaml', 
@@ -46,8 +41,7 @@ node {
                     pollInterval: 60000,
                     onFailure: 'ROLLBACK'
                 )
-                echo "${outputs}"    
-            }
+                echo "${outputs}"   
         }
     }
 }
