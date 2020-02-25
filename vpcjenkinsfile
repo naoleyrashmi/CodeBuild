@@ -31,10 +31,10 @@ pipeline {
                     export PrivateAZASubnetBlock=${PrivateAZASubnet_Block}
                     export PrivateAZBSubnetBlock=${PrivateAZBSubnet_Block}
                     export PrivateAZCSubnetBlock=${PrivateAZCSubnet_Block}
-                    export PublicAZASubnet_Block=${PublicAZASubnet_Block}
-                    export PublicAZBSubnet_Block=${PublicAZBSubnet_Block}
-                    export PublicAZCSubnet_Block=${PublicAZCSubnet_Block}
-                    python generate_CF_params.py "VpcCidrParam AccountName REGION PrivateAZASubnetBlock PrivateAZBSubnetBlock PrivateAZCSubnetBlock PublicAZASubnetBlock PublicAZBSubnetBlock PublicAZCSubnetBlock" ${BUILD_ID}
+                    export PublicAZASubnetBlock=${PublicAZASubnet_Block}
+                    export PublicAZBSubnetBlock=${PublicAZBSubnet_Block}
+                    export PublicAZCSubnetBlock=${PublicAZCSubnet_Block}
+                    python generate_CF_params.py "VpcCidrParam AccountName PrivateAZASubnetBlock PrivateAZBSubnetBlock PrivateAZCSubnetBlock PublicAZASubneBlock PublicAZBSubnetBlock PublicAZCSubnetBlock" ${BUILD_ID}
                  '''
             }
         }    
