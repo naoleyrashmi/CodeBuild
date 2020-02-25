@@ -26,7 +26,6 @@ pipeline {
         //     aws cloudformation validate-template --template-body file://vpc.yaml
         //     }
         // }    
-        st  
         stage('Deploy App') {
             steps {
                 sh (script: '''
