@@ -1,8 +1,7 @@
 pipeline {
     agent any
     parameters {
-        string(name: 'VpcCidr_Param', description: 'Please Enter the vpc cidr', defaultValue: '172.64.248.0/21')
-		string(name: 'Region', defaultValue: 'us-east-2' , description: 'Please select the AWS Region')
+        string(name: 'VpcCidr_Param', description: 'Please Enter the vpc cidr', defaultValue: '10.0.0.0/16')
         credentials(name: 'CREDENTIALS', description: 'AWS Credentials', credentialType: 'Username with password')       
         string(name: 'ACCOUNT_NAME', description: 'Please Enter the name of the customer to be on boarded. (CustomerName-AssetName)')
         choice(name: 'Region', description: 'Please select the AWS Region', choices: 'eu-west-1\neu-west-2\neu-west-3\neu-central-1\nus-west-1\nus-west-2\nus-east-2\nus-east-1\nap-northeast-1\nap-northeast-2\nap-northeast-3\nap-south-1\nap-southeast-1\nap-southeast-2\nca-central-1\ncn-north-1\ncn-northwest-1\nsa-east-1')
@@ -39,9 +38,10 @@ pipeline {
                  '''
             }
         } 
-    withAWS(region: Region){   
+       
         stage('Deploy App') {
             steps {
+                withAWS(region: Region){
                 script{
                 def outputs = cfnUpdate(
                     stack: "${Account_Name}-vpc-app", 
