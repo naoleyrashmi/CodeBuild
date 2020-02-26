@@ -14,11 +14,14 @@ pipeline {
                 booleanParam(name: 'APPLY_CHANGES', defaultValue: false, description: 'If not opted, it will be dry run')
             }
     stages {
-            stage('Preparation') {
-                    steps {
-                    git 'https://github.com/naoleyrashmi/CodeBuild.git'
-                }
-            }  
+            stage ('Setup Env') {
+                    steps{
+                        script {
+                            currentBuild.displayName = "#${env.BUILD_NUMBER}-${env.ACCOUNT_NAME}-removeApp"
+                            currentBuild.description = "${env.BUILD_NUMBER}-${env.ACCOUNT_NAME}-removeApp"
+                        }
+                    }
+                } 
             stage("collect params") {
                     steps {
                     sh '''
