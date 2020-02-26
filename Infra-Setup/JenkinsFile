@@ -39,8 +39,9 @@ pipeline {
             }
         } 
        
-        stage('Deploy App') {
+        stage('Deploy Infrastructure') {
             steps {
+                withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', accessKeyVariable: 'AWS_ACCESS_KEY_ID', credentialsId: CREDENTIALS, secretKeyVariable: 'AWS_SECRET_ACCESS_KEY']]) {
                 withAWS(region: Region){
                 script{
                 def outputs = cfnUpdate(
@@ -55,6 +56,7 @@ pipeline {
             }
         }
     }
+}
 }
 }
 }
