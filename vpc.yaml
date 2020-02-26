@@ -15,8 +15,6 @@
 AWSTemplateFormatVersion: 2010-09-09
 Description: >
   Creates a VPC with public and private subnets for a given AWS Account.
-  This template incorporates many design ideas from this excellent blog post:
-    https://medium.com/aws-activate-startup-blog/practical-vpc-design-8412e1a18dcc#.g0txo2p4v
 Parameters:
   AccountName:
     Description: Please Enter the name of the customer. (eg. CustomerName-AssetName)
@@ -74,6 +72,24 @@ Outputs:
     Value: !Ref Vpc
     Export:
       Name: !Sub "${AWS::StackName}-vpc-id"
+  
+  ContainerSecurityGroupId:
+      Description: ContainerSecurityGroup Id
+      Value: !Ref ContainerSecurityGroup
+      Export:
+        Name: !Sub "${AWS::StackName}-ContainerSecurityGroup-id"
+
+  LoadBalancerSecurityGroupId:
+      Description: LoadBalancerSecurityGroup Id
+      Value: !Ref LoadBalancerSecurityGroup
+      Export:
+        Name: !Sub "${AWS::StackName}-LoadBalancerSecurityGroup-id"
+  
+  PublicSecurityGroupId:
+      Description: PublicSecurityGroup Id
+      Value: !Ref PublicSecurityGroup
+      Export:
+        Name: !Sub "${AWS::StackName}-PublicSecurityGroup-id"
 
   PublicAZASubnetId:
     Description: Availability Zone A public subnet Id
@@ -110,6 +126,13 @@ Outputs:
     Value: !Ref PrivateAZCSubnet
     Export:
       Name: !Sub "${AWS::StackName}-private-az-c-subnet"
+
+  ApiGatewaytoinvokelambdaTest26:
+    Description: Lambda Invocation Role ARN
+    Value: !GetAtt 'ApiGatewaytoinvokelambdaTest26.Arn'
+    Export:
+      Name: !Sub "${AWS::StackName}-ApiGatewaytoinvokelambda"
+
 
 
 Resources:
@@ -369,7 +392,37 @@ Resources:
         # - IpProtocol: tcp
         #   FromPort: 22
         #   ToPort: 22
-        #   CidrIp: 115.114.9.131
+        #   CidrIp: 115.114.9.131/32
+
+  ApiGatewaytoinvokelambdaTest26:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+        - Effect: Allow
+          Principal:
+            Service:
+            - apigateway.amazonaws.com
+            - lambda.amazonaws.com
+          Action:
+          - sts:AssumeRole
+      Path: "/"
+      # RoleName: ApiGatewaytoinvokelambdaTest26
+      Policies:
+      - PolicyName: ApiGatewaytoinvokelambdaPolicy
+        PolicyDocument:
+          Version: '2012-10-17'
+          Statement:
+          - Effect: Allow
+            Action:
+            - logs:*
+            Resource: arn:aws:logs:*:*:*
+          - Effect: Allow
+            Action:
+            - lambda:InvokeFunction
+            - cloudwatch:*
+            Resource: "*"
 
   # S3VPCEndpoint:
   #   Type: "AWS::EC2::VPCEndpoint"

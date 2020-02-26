@@ -1,6 +1,5 @@
 node {
    def mvnHome
-//    try {
         stage ("Get parameters"){
             // checkout scm
             List props = []
