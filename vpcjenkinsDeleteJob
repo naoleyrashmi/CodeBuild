@@ -21,7 +21,7 @@ pipeline {
                         withAWS(region: Region){
                             script{ 
                                 def outputs = cfnDelete(
-                                    stack: ""${Account_Name}-vpc-app"",
+                                    stack: "${Account_Name}-vpc-app"",
                                     pollInterval:1000,
                                     timeoutInMinutes: 60
                                 )
