@@ -44,7 +44,7 @@ pipeline {
 				 def outputs = samDeploy(
                                     stackName: "${Account_Name}-InitialSetup-app", 
                                     templateFile:'parentstack.yaml', 
-                                    parameters: [[key: 'Region', value: '$Region'], [key: 'AccountName', value: '$ACCOUNT_NAME'], [key: 'PrimePartitionKey', value: '$PrimePartition_Key'], [key: 'PrimePartitionKey1', value: '$PrimePartition_Key1'], [key: 'PrimePartitionKey2', value: '$PrimePartition_Key2'], [key: 'PrimePartitionKey3', value: '$PrimePartition_Key3']],
+                                    parameters: [[key: 'REGION', value: '$Region'], [key: 'AccountName', value: '$ACCOUNT_NAME'], [key: 'PrimePartitionKey', value: '$PrimePartition_Key'], [key: 'PrimePartitionKey1', value: '$PrimePartition_Key1'], [key: 'PrimePartitionKey2', value: '$PrimePartition_Key2'], [key: 'PrimePartitionKey3', value: '$PrimePartition_Key3']],
 				    s3Bucket: "rashmi-ohio-sam-demo",
                                     region: "$Region"
                                 )
