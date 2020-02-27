@@ -42,7 +42,7 @@ pipeline {
                         withAWS(region: Region){
                             script{ 
 				 def outputs = samDeploy(
-                                    stackName: "${Account_Name}-InitialSetup-app", 
+                                    stackName: "${AccountName}-InitialSetup-app", 
                                     templateFile:'parentstack.yaml', 
                                     parameters: [[key: 'REGION', value: '$Region'], [key: 'AccountName', value: '$ACCOUNTNAME'], [key: 'PrimePartitionKey', value: '$PrimePartitionKey'], [key: 'PrimePartitionKey1', value: '$PrimePartitionKey1'], [key: 'PrimePartitionKey2', value: '$PrimePartitionKey2'], [key: 'PrimePartitionKey3', value: '$PrimePartitionKey3']],
 				    s3Bucket: "rashmi-ohio-sam-demo",
