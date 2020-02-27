@@ -41,7 +41,8 @@ pipeline {
                         withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', accessKeyVariable: 'AWS_ACCESS_KEY_ID', credentialsId: CREDENTIALS, secretKeyVariable: 'AWS_SECRET_ACCESS_KEY']]) {
                         withAWS(region: Region){
                             script{ 
-                                def outputs = samDeploy(
+                                   def s3Bucket
+				   def outputs = samDeploy(
                                     stackName: "${Account_Name}-InitialSetup-app", 
                                     templateFile:'parentstack.yaml', 
                                     parameters: ['ParameterKey=REGION ParameterValue=$Region', 'ParameterKey=AccountName ParameterValue=$ACCOUNT_NAME' , 'ParameterKey=PrimePartitionKey ParameterValue=$PrimePartition_Key' ,'ParameterKey=PrimePartitionKey1 ParameterValue=$PrimePartition_Key1' ,'ParameterKey=PrimePartitionKey2 ParameterValue=$PrimePartition_Key2' ,'ParameterKey=PrimePartitionKey3 ParameterValue=$PrimePartition_Key3']									
