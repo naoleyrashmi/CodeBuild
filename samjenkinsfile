@@ -2,7 +2,7 @@ pipeline {
     agent any
     parameters {
                 string(name: 'AccountName', description: 'Please Enter the name of the customer.')
-                string(name: 'Region', defaultValue: 'ua-east-2' , description: 'Please select the AWS Region')
+                string(name: 'Region', defaultValue: 'us-east-2' , description: 'Please select the AWS Region')
                 credentials(name: 'CREDENTIALS', description: 'AWS Credentials', credentialType: 'Username with password')       
                 string(name: 'PrimePartitionKey', defaultValue: 'DataFlowId' , description: 'HashType PrimaryKey Name')
                 string(name: 'PrimePartitionKey1', defaultValue: 'DataFlowId' , description: 'HashType PrimaryKey1 Name')
