@@ -14,8 +14,8 @@ pipeline {
             stage ('Setup Env') {
                     steps{
                         script {
-                            currentBuild.displayName = "#${env.BUILD_NUMBER}-${env.ACCOUNT_NAME}-deployApp"
-                            currentBuild.description = "${env.BUILD_NUMBER}-${env.ACCOUNT_NAME}-deployApp"
+                            currentBuild.displayName = "#${env.BUILD_NUMBER}-${env.ACCOUNTNAME}-deployApp"
+                            currentBuild.description = "${env.BUILD_NUMBER}-${env.ACCOUNTNAME}-deployApp"
                         }
                     }
                 } 
@@ -41,7 +41,7 @@ pipeline {
                         withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', accessKeyVariable: 'AWS_ACCESS_KEY_ID', credentialsId: CREDENTIALS, secretKeyVariable: 'AWS_SECRET_ACCESS_KEY']]) {
                         withAWS(region: Region){
                             script{
-				def outputs = samDeploy([credentialsId: CREDENTIALS,  parameters: [[key: 'REGION', value: "${Region}"], [key: 'AccountName', value: "${ACCOUNTNAME}"], [key: 'PrimePartitionKey', value: "${PrimePartitionKey}"], [key: 'PrimePartitionKey1', value: "${PrimePartitionKey1}"], [key: 'PrimePartitionKey2', value: "${PrimePartitionKey2}"], [key: 'PrimePartitionKey3', value: "${PrimePartitionKey3}"]], s3Bucket: "rashmi-ohio-sam-demo", stackName: "${Account_Name}-InitialSetup-app", templateFile: 'parentstack.yaml']) 
+				def outputs = samDeploy([credentialsId: CREDENTIALS,  parameters: [[key: 'REGION', value: "${Region}"], [key: 'AccountName', value: "${ACCOUNTNAME}"], [key: 'PrimePartitionKey', value: "${PrimePartitionKey}"], [key: 'PrimePartitionKey1', value: "${PrimePartitionKey1}"], [key: 'PrimePartitionKey2', value: "${PrimePartitionKey2}"], [key: 'PrimePartitionKey3', value: "${PrimePartitionKey3}"]], s3Bucket: "rashmi-ohio-sam-demo", stackName: "${AccountName}-InitialSetup-app", templateFile: 'parentstack.yaml']) 
                             echo "${outputs}"    
                         }
                     }
