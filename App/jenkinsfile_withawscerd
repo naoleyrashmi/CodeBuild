@@ -13,6 +13,14 @@ pipeline {
 		
     }
 	stages {
+        stage ('Setup Env') {
+                    steps{
+                        script {
+                            currentBuild.displayName = "#${env.BUILD_NUMBER}-${env.Account_Name}-deployApp"
+                            currentBuild.description = "${env.BUILD_NUMBER}-${env.Account_Name}-deployApp"
+                        }
+                    }
+                } 
         stage('Preparation') {
             steps {
             git 'https://github.com/naoleyrashmi/CodeBuild.git'
