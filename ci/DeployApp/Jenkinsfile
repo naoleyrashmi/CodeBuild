@@ -21,11 +21,6 @@ pipeline {
                         }
                     }
                 } 
-        stage('Preparation') {
-            steps {
-            git 'https://github.com/naoleyrashmi/CodeBuild.git'
-            }
-        }
 		stage ('Validate Params for App Deploy') {
 				steps{
                       sh (script: '''
@@ -38,7 +33,8 @@ pipeline {
 				}
         stage('Deploy App') {
             steps {
-		withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', accessKeyVariable: 'AWS_ACCESS_KEY_ID', credentialsId: CREDENTIALS, secretKeyVariable: 'AWS_SECRET_ACCESS_KEY']]) {
+		withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', accessKeyVariable: 'AWS_ACCESS_KEY_ID', credentialsId: CREDENTIALS, secretKeyVariable: 'AWS_SECRET_ACCESS_KEY']]) 
+        {
 				// some block
 	           sh (script: '''
                     #!bin/bash
@@ -48,8 +44,8 @@ pipeline {
                     aws cloudformation deploy --template-file /var/lib/jenkins/workspace/${Pipeline_Name}/App/NestedScripts/packaged.yaml --region ${Region} --capabilities CAPABILITY_IAM CAPABILITY_AUTO_EXPAND --stack-name "InitialSetup-${Account_Name}" --parameter-overrides PrimePartitionKey=${PrimePartitionKey}  PrimePartitionKey1=${PrimePartitionKey1} PrimePartitionKey2=${PrimePartitionKey2} PrimePartitionKey3=${PrimePartitionKey3}
                     ls -lrt
                 ''')
-            }    
+                }    
+            }
         }
     }
-}
 }

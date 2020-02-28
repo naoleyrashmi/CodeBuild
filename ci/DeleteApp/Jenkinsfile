@@ -17,7 +17,8 @@ pipeline {
             } 
             stage('Delete InitialSetup') {
                     steps {
-                        withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', accessKeyVariable: 'AWS_ACCESS_KEY_ID', credentialsId: CREDENTIALS, secretKeyVariable: 'AWS_SECRET_ACCESS_KEY']]) {
+                        withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', accessKeyVariable: 'AWS_ACCESS_KEY_ID', credentialsId: CREDENTIALS, secretKeyVariable: 'AWS_SECRET_ACCESS_KEY']]) 
+                        {
                           sh (script: '''
                                 #!bin/bash
                                 aws cloudformation delete-stack --stack-name "InitialSetup-${Account_Name}"
