@@ -8,9 +8,9 @@ Parameters:
     Type: String
     Default: "citi"
 
-  REGION:
-     Type: String
-     Description: Enter the region
+  # REGION:
+  #    Type: String
+  #    Description: Enter the region
 
   PrimePartitionKey:
     Description: HashType PrimaryKey Name
