@@ -2,13 +2,13 @@ pipeline {
     agent any
     parameters {
         string(name: 'Account_Name', description: 'Please Enter the name of the customer.')
-		string(name: 'Region', defaultValue: 'ua-east-2' , description: 'Please select the AWS Region')
+        choice(name: 'Region', description: 'Please select the AWS Region', choices: 'eu-west-1\neu-west-2\neu-west-3\neu-central-1\nus-west-1\nus-west-2\nus-east-2\nus-east-1\nap-northeast-1\nap-northeast-2\nap-northeast-3\nap-south-1\nap-southeast-1\nap-southeast-2\nca-central-1\ncn-north-1\ncn-northwest-1\nsa-east-1')
         credentials(name: 'CREDENTIALS', description: 'AWS Credentials', credentialType: 'Username with password')       
         string(name: 'PrimePartitionKey', defaultValue: 'DataFlowId' , description: 'HashType PrimaryKey Name')
         string(name: 'PrimePartitionKey1', defaultValue: 'DataFlowId' , description: 'HashType PrimaryKey1 Name')
         string(name: 'PrimePartitionKey2', defaultValue: 'DataFlowId' , description: 'HashType PrimaryKey Name')
         string(name: 'PrimePartitionKey3', defaultValue: 'ConnectionId' , description: 'HashType PrimaryKey Name')
-		string(name: 'Pipeline_Name', defaultValue: 'Test' , description: 'Input name of Pipeline Jon which you are trigerring')
+		string(name: 'Pipeline_Name', defaultValue: 'Test' , description: 'Input name of Pipeline Job which you are trigerring')
 
 		
     }
