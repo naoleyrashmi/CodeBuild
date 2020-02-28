@@ -10,8 +10,8 @@ pipeline {
             stage ('Setup Env') {
                 steps{
                     script {
-                        currentBuild.displayName = "#${env.BUILD_NUMBER}-${env.ACCOUNT_NAME}-removeApp"
-                        currentBuild.description = "${env.BUILD_NUMBER}-${env.ACCOUNT_NAME}-removeApp"
+                        currentBuild.displayName = "#${env.BUILD_NUMBER}-${env.ACCOUNT_NAME}-removeInfra"
+                        currentBuild.description = "${env.BUILD_NUMBER}-${env.ACCOUNT_NAME}-removeInfra"
                     }
                 }
             } 
