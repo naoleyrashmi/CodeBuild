@@ -44,7 +44,7 @@ pipeline {
                                 region: "${Region}", 
                                 s3Bucket: "rashmi-ohio-sam-demo", 
                                 stackName: "${AccountName}-InitialSetup-app",
-                                Capabilities: "CAPABILITY_AUTO_EXPAND",
+                                capabilities: "CAPABILITY_AUTO_EXPAND",
                                 templateFile: 'parentstack.yaml']) 
                             echo "${outputs}"    
                         }
