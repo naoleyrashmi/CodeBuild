@@ -39,7 +39,13 @@ pipeline {
             stage('Deploy Application') {
                     steps {
                             script{
-				def outputs = samDeploy([credentialsId: CREDENTIALS,  parameters: [[key: 'REGION', value: "${Region}"], [key: 'AccountName', value: "${ACCOUNTNAME}"], [key: 'PrimePartitionKey', value: "${PrimePartitionKey}"], [key: 'PrimePartitionKey1', value: "${PrimePartitionKey1}"], [key: 'PrimePartitionKey2', value: "${PrimePartitionKey2}"], [key: 'PrimePartitionKey3', value: "${PrimePartitionKey3}"]], region: "${Region}", s3Bucket: "rashmi-ohio-sam-demo", stackName: "${AccountName}-InitialSetup-app", templateFile: 'parentstack.yaml']) 
+				                def outputs = samDeploy([credentialsId: CREDENTIALS,  
+                                parameters: [[key: 'REGION', value: "${Region}"], [key: 'AccountName', value: "${ACCOUNTNAME}"], [key: 'PrimePartitionKey', value: "${PrimePartitionKey}"], [key: 'PrimePartitionKey1', value: "${PrimePartitionKey1}"], [key: 'PrimePartitionKey2', value: "${PrimePartitionKey2}"], [key: 'PrimePartitionKey3', value: "${PrimePartitionKey3}"]], 
+                                region: "${Region}", 
+                                s3Bucket: "rashmi-ohio-sam-demo", 
+                                stackName: "${AccountName}-InitialSetup-app",
+                                capabilities: "CAPABILITY_AUTO_EXPAND",
+                                templateFile: 'parentstack.yaml']) 
                             echo "${outputs}"    
                         }
                     }
