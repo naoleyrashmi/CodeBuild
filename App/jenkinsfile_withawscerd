@@ -8,6 +8,9 @@ pipeline {
         string(name: 'PrimePartitionKey1', defaultValue: 'DataFlowId' , description: 'HashType PrimaryKey1 Name')
         string(name: 'PrimePartitionKey2', defaultValue: 'DataFlowId' , description: 'HashType PrimaryKey Name')
         string(name: 'PrimePartitionKey3', defaultValue: 'ConnectionId' , description: 'HashType PrimaryKey Name')
+		string(name: 'Pipeline_Name', defaultValue: 'Test' , description: 'Input name of Pipeline Jon which you are trigerring')
+
+		
     }
 	stages {
         stage('Preparation') {
@@ -27,11 +30,13 @@ pipeline {
 				}
         stage('Deploy App') {
             steps {
-			    withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', accessKeyVariable: 'AWS_ACCESS_KEY_ID', credentialsId: CREDENTIALS, secretKeyVariable: 'AWS_SECRET_ACCESS_KEY']]) {
+		withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', accessKeyVariable: 'AWS_ACCESS_KEY_ID', credentialsId: CREDENTIALS, secretKeyVariable: 'AWS_SECRET_ACCESS_KEY']]) {
 				// some block
-	                sh (script: '''
+	           sh (script: '''
                     #!bin/bash
+		    rm -rf template-*.yaml
                     aws cloudformation package --template-file parentstack.yaml --s3-bucket rashmi-ohio-sam-demo --output-template-file packaged.yaml
+                    aws cloudformation deploy --template-file /var/lib/jenkins/workspace/${Pipeline_Name}/packaged.yaml --region us-east-2 --capabilities CAPABILITY_IAM CAPABILITY_AUTO_EXPAND --stack-name "InitialSetup-${Account_Name}" --parameter-overrides PrimePartitionKey=${PrimePartitionKey}  PrimePartitionKey1=${PrimePartitionKey1} PrimePartitionKey2=${PrimePartitionKey2} PrimePartitionKey3=${PrimePartitionKey3}
                     ls -lrt
                 ''')
             }    
