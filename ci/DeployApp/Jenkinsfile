@@ -9,6 +9,8 @@ pipeline {
         string(name: 'PrimePartitionKey2', defaultValue: 'DataFlowId' , description: 'HashType PrimaryKey Name')
         string(name: 'PrimePartitionKey3', defaultValue: 'ConnectionId' , description: 'HashType PrimaryKey Name')
 		string(name: 'Pipeline_Name', defaultValue: 'Test' , description: 'Input name of Pipeline Job which you are trigerring')
+        string(name: 'Environment_Name', defaultValue: 'dev' , description: 'Input name of environment for deployment')
+
 
 		
     }
@@ -41,7 +43,8 @@ pipeline {
                     cd ./App/NestedScripts
 		            rm -rf template-*.yaml
                     aws cloudformation package --template-file parentstack.yaml --s3-bucket rashmi-ohio-sam-demo --output-template-file packaged.yaml
-                    aws s3 cp ./packaged.yaml s3://rashmi-ohio-sam-demo/packaged.yaml
+                    aws s3api put-object-tagging  --bucket rashmi-ohio-sam-demo  --key packaged.yaml --tagging 'TagSet=[{Key=Environment,Value=${Environment_Name}}]' 
+        
                     ls -lrt
                 ''')
                 }    
