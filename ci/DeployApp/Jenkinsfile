@@ -31,7 +31,7 @@ pipeline {
                         ''')
 					}
 				}
-        stage('Deploy App') {
+        stage('Build App') {
             steps {
 		withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', accessKeyVariable: 'AWS_ACCESS_KEY_ID', credentialsId: CREDENTIALS, secretKeyVariable: 'AWS_SECRET_ACCESS_KEY']]) 
         {
@@ -41,8 +41,21 @@ pipeline {
                     cd ./App/NestedScripts
 		            rm -rf template-*.yaml
                     aws cloudformation package --template-file parentstack.yaml --s3-bucket rashmi-ohio-sam-demo --output-template-file packaged.yaml
-                    aws cloudformation deploy --template-file /var/lib/jenkins/workspace/${Pipeline_Name}/App/NestedScripts/packaged.yaml --region ${Region} --capabilities CAPABILITY_IAM CAPABILITY_AUTO_EXPAND --stack-name "InitialSetup-${Account_Name}" --parameter-overrides PrimePartitionKey=${PrimePartitionKey}  PrimePartitionKey1=${PrimePartitionKey1} PrimePartitionKey2=${PrimePartitionKey2} PrimePartitionKey3=${PrimePartitionKey3}
+                    aws s3 cp ./packaged.yaml s3://rashmi-ohio-sam-demo/packaged.yaml
                     ls -lrt
+                ''')
+                }    
+            }
+        }
+
+         stage('Deploy App') {
+            steps {
+		withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', accessKeyVariable: 'AWS_ACCESS_KEY_ID', credentialsId: CREDENTIALS, secretKeyVariable: 'AWS_SECRET_ACCESS_KEY']]) 
+        {
+				// some block
+	           sh (script: '''
+                    #!bin/bash
+                    aws cloudformation deploy --template-file /var/lib/jenkins/workspace/${Pipeline_Name}/App/NestedScripts/packaged.yaml --region ${Region} --capabilities CAPABILITY_IAM CAPABILITY_AUTO_EXPAND --stack-name "InitialSetup-${Account_Name}" --parameter-overrides PrimePartitionKey=${PrimePartitionKey}  PrimePartitionKey1=${PrimePartitionKey1} PrimePartitionKey2=${PrimePartitionKey2} PrimePartitionKey3=${PrimePartitionKey3} 
                 ''')
                 }    
             }
