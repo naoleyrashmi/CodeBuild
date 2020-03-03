@@ -13,7 +13,7 @@ pipeline {
     }
 	stages {
         stage('Get Credentials') {
-
+            steps{
         withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', accessKeyVariable: 'AWS_ACCESS_KEY_ID', credentialsId: CREDENTIALS, secretKeyVariable: 'AWS_SECRET_ACCESS_KEY']]) 
         {
         stage ('Setup Env') {
@@ -60,5 +60,6 @@ pipeline {
             }
         }
     }
+}
 }
 }
