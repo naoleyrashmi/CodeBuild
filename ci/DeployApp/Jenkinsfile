@@ -10,12 +10,11 @@ pipeline {
         string(name: 'PrimePartitionKey3', defaultValue: 'ConnectionId' , description: 'HashType PrimaryKey Name')
 		string(name: 'Pipeline_Name', defaultValue: 'Test' , description: 'Input name of Pipeline Job which you are trigerring')
         string(name: 'Environment_Name', defaultValue: 'dev' , description: 'Input name of environment for deployment')
+
+
+		
     }
 	stages {
-        stage('Get Credentials') {
-            steps{
-        withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', accessKeyVariable: 'AWS_ACCESS_KEY_ID', credentialsId: CREDENTIALS, secretKeyVariable: 'AWS_SECRET_ACCESS_KEY']]) 
-        {
         stage ('Setup Env') {
                     steps{
                         script {
@@ -34,8 +33,11 @@ pipeline {
                         ''')
 					}
 				}
-        stage('Build App') {
+        stage('Build App for Dev') {
             steps {
+            if (env.Environment_Name == "dev") { 
+		withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', accessKeyVariable: 'AWS_ACCESS_KEY_ID', credentialsId: CREDENTIALS, secretKeyVariable: 'AWS_SECRET_ACCESS_KEY']]) 
+        {
 				// some block
 	           sh (script: '''
                     #!bin/bash
@@ -45,12 +47,36 @@ pipeline {
                     aws s3api put-object-tagging  --bucket rashmi-ohio-sam-demo  --key packaged.yaml --tagging 'TagSet=[{Key=Environment,Value=blue}]' 
         
                     ls -lrt
-                ''')   
+                ''')
+                } 
+
+            }
+            else
+                echo "ignore"
+        }
+        }
+        stage('Build App') {
+            steps {
+		withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', accessKeyVariable: 'AWS_ACCESS_KEY_ID', credentialsId: CREDENTIALS, secretKeyVariable: 'AWS_SECRET_ACCESS_KEY']]) 
+        {
+				// some block
+	           sh (script: '''
+                    #!bin/bash
+                    cd ./App/NestedScripts
+		            rm -rf template-*.yaml
+                    aws cloudformation package --template-file parentstack.yaml --s3-bucket rashmi-ohio-sam-demo --output-template-file packaged.yaml
+                    aws s3api put-object-tagging  --bucket rashmi-ohio-sam-demo  --key packaged.yaml --tagging 'TagSet=[{Key=Environment,Value=blue}]' 
+        
+                    ls -lrt
+                ''')
+                }    
             }
         }
 
          stage('Deploy App') {
             steps {
+		withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', accessKeyVariable: 'AWS_ACCESS_KEY_ID', credentialsId: CREDENTIALS, secretKeyVariable: 'AWS_SECRET_ACCESS_KEY']]) 
+        {
 				// some block
 	           sh (script: '''
                     #!bin/bash
@@ -60,6 +86,4 @@ pipeline {
             }
         }
     }
-}
-}
 }
