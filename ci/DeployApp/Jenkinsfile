@@ -33,32 +33,6 @@ pipeline {
                         ''')
 					}
 				}
-        stage('Build App for Dev') {
-            steps {
-                script {
-                if (env.Environment_Name == "dev") { 
-		withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', accessKeyVariable: 'AWS_ACCESS_KEY_ID', credentialsId: CREDENTIALS, secretKeyVariable: 'AWS_SECRET_ACCESS_KEY']]) 
-        {
-				// some block
-	           sh (script: '''
-                    #!bin/bash
-                    cd ./App/NestedScripts
-		            rm -rf template-*.yaml
-                    aws cloudformation package --template-file parentstack.yaml --s3-bucket rashmi-ohio-sam-demo --output-template-file packaged.yaml
-                    aws s3api put-object-tagging  --bucket rashmi-ohio-sam-demo  --key packaged.yaml --tagging 'TagSet=[{Key=Environment,Value=blue}]' 
-        
-                    ls -lrt
-                ''')
-                } 
-
-            }
-            else
-                {
-                echo "ignore"
-        }
-        }
-        }
-        }
         stage('Build App') {
             steps {
 		withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', accessKeyVariable: 'AWS_ACCESS_KEY_ID', credentialsId: CREDENTIALS, secretKeyVariable: 'AWS_SECRET_ACCESS_KEY']]) 
