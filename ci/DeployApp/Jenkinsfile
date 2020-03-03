@@ -12,6 +12,8 @@ pipeline {
         string(name: 'Environment_Name', defaultValue: 'dev' , description: 'Input name of environment for deployment')
     }
 	stages {
+        stage('Get Credentials') {
+
         withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', accessKeyVariable: 'AWS_ACCESS_KEY_ID', credentialsId: CREDENTIALS, secretKeyVariable: 'AWS_SECRET_ACCESS_KEY']]) 
         {
         stage ('Setup Env') {
@@ -58,4 +60,5 @@ pipeline {
             }
         }
     }
+}
 }
