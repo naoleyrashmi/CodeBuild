@@ -35,7 +35,7 @@ pipeline {
 				}
         stage('Build App for Dev') {
             steps {
-            if (env.Environment_Name == "dev") { 
+                if (env.Environment_Name == "dev") { 
 		withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', accessKeyVariable: 'AWS_ACCESS_KEY_ID', credentialsId: CREDENTIALS, secretKeyVariable: 'AWS_SECRET_ACCESS_KEY']]) 
         {
 				// some block
